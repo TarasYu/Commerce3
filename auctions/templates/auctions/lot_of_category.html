@@ -1,0 +1,26 @@
+{% extends "auctions/layout_auction.html" %}
+
+{% block listing %}
+  
+      <div class="body-text">
+                
+         {% for item in lot_categories %}
+            <div class="activ_list">
+               <!-- % url 'lot' lot.id %-->
+               
+               <a href="{% url 'lot' item.id %}" >
+                  <div class="img">
+                     <img src="media/{{ item.photo}}" style="max-width: 100%; height: auto;"></img>
+                  </div>
+               </a>
+            
+               <a href="{% url 'lot' item.id %}">
+                  <div class="title">{{ item.title }}</div>
+               </a>
+               <div class="price"><strong>{{ item.starting_price }} &#8364</strong></div>      
+            </div>
+         {% endfor %}
+      
+      </div>
+   
+{% endblock %}

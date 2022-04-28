@@ -1,0 +1,48 @@
+{% extends "auctions/layout_auction.html" %}
+{% load static %}
+{% block listing %}
+<div class="body-text">
+    {% for lot in lots %}
+    <div class="activ_list">
+        {% if user.is_authenticated %}
+        <!--посилання на відображення для аутифікованих відвідувачів-->
+        <a href="{% url 'lot_au' lot.id user.id %}">
+            {% if lot.photo %}
+            <div class="img">
+                <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+            </div>
+            {% else %}
+            <div class="img"></div>
+            {% endif %}
+        </a>
+        <a href="{% url 'lot_au' lot.id user.id %}">
+            <div class="title">{{ lot.title }}</div>
+        </a>
+        {% else %}
+        <!--тут посилання на відображення лоту для неаутифікованих-->
+        <a href="{% url 'lot' lot.id %}">
+            {% if lot.photo %}
+            <div class="img">
+                <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+            </div>
+            {% else %}
+            <div class="img"></div>
+            {% endif %}
+        </a>
+        <a href="{% url 'lot' lot.id %}">
+            <div class="title">{{ lot.title }}</div>
+        </a>
+        {% endif %}
+
+        <div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
+
+        <div class="description">{{lot.description}}</div>
+
+
+
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
+</div>

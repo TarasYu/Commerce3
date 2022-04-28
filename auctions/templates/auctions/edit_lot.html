@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+<div>
+
+   <form action="{% url 'edit_auction' instance_id %}" method="post" enctype="multipart/form-data">
+
+      {% csrf_token %}
+      {{ form.as_p }}
+      <p>Item ID: {{ instance_id }}</p>
+      <p>User: {{ user }}</p>
+
+      <button type="submit">Save changes</button>
+   </form>
+   {% endblock %}

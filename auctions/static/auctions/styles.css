@@ -1,0 +1,76 @@
+body {
+    padding: 10px;
+}
+
+.sidebar {
+    height: 100%;
+    width: 150px;
+    position: relative;
+    top: 5;
+    left: 0;
+    padding-top: 0px;
+    background-color: white;
+    border: 1px solid rgb(228, 98, 98);
+    float: left;
+    margin-top: 0px;
+}
+
+.sidebar div {
+    padding: 8px;
+    font-size: 16px;
+    display: block;
+}
+
+.body-text {
+    border: 1px solid rgb(211, 211, 211);
+    margin-left: 160px;
+    font-size: 18px;
+    padding: 3px;
+}
+
+.activ_list {
+    border-bottom: 1px solid rgb(212, 18, 18);
+    padding: 30px;
+    min-height: 150px;
+    margin: 0 5px 0px 5px;
+}
+
+.img {
+    width: 100px;
+    height: 100px;
+    float: left;
+    border: 1px solid rgb(248, 247, 247);
+    padding: 5px;
+}
+
+.price {
+    padding: 20px 20px 20px 30px;
+    padding-bottom: 30px;
+    border: 1px solid rgb(247, 244, 244);
+    margin-left: 100px;
+}
+
+.title {
+    margin-left: 120px;
+    font-size: 150%;
+}
+
+.btn {
+    display: inline-block;
+    /* Строчно-блочный элемент */
+    background: #9b9fa1;
+    /* Серый цвет фона */
+    color: #fff;
+    /* Белый цвет текста */
+    padding: 0.5rem 1rem;
+    /* Поля вокруг текста */
+    text-decoration: none;
+    /* Убираем подчёркивание */
+    border-radius: 3px;
+    /* Скругляем уголки */
+
+}
+
+.edit {
+    float: right;
+}

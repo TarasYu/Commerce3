@@ -1,0 +1,60 @@
+{% extends "auctions/layout.html" %}
+{% load auctions_extras %}
+
+{% block body %}
+<div class="activ_list">
+   <p>ph = {{ photo }}</p>
+   {% if lot.photo %}
+
+   <div class="img">
+      <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+   </div>
+   {% else %}
+   <div class="img"></div>
+   {% endif %}
+
+
+   <div class="title">{{ lot.title }}</div>
+
+   <div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
+
+   <div class="description">{{lot.description}}</div>
+   {% if user.is_authenticated %}
+
+   <div class="btn-watchlist">
+
+      {% if list %}
+      <form action="{% url 'watchlist' %}" method="post">
+         {% csrf_token %}
+         {{ form }}
+         <p><input type="submit" value="Remove from watchlist"></p>
+      </form>
+      {% else %}
+      <form action="{% url 'watchlist' %}" method="post">
+         {% csrf_token %}
+         {{ form }}
+         <p><input type="submit" value="Add to watchlist"></p>
+      </form>
+      <p>q = {{ q }}</p>
+      <p>{{ list }}</p>
+
+      {% endif %}
+
+
+
+   </div>
+   <p>item:{{ item }}</p>
+
+   {% endif %}
+
+   {{lot.owner_name }}
+   <p>{{user.username}} id={{user.id}}</p>
+   <p>Lot.ID: {{lot.id}}</p>
+   <p>test.ID: {{test_id}}</p>
+   {% if lot.owner_name|name_as_str == user.username|name_as_str %}
+   <div class="edit">
+      <a href="{% url 'edit_auction' lot.id %}" class="btn">Edit lot data</a>
+   </div>
+   {% endif %}
+</div>
+{% endblock %}
