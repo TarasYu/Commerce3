@@ -126,7 +126,7 @@ def lot_au(request, lot_id, user_id):
         
     return render(request, "auctions/lot.html", {
         "lot": lot,
-        "list": bool,
+        "in_watchlist": bool,
         "form": WatchlistForm(
             {
                 'lot_id': lot.id,
@@ -156,10 +156,8 @@ def create_auction(request, user_id):
             instance.owner_name = user
             instance.save()
             form.save_m2m()
-            lot = Lot.objects.get(pk=instance.id)
-            return render(request, "auctions/lot.html", {
-                'lot': lot#instance,     
-            })
+            return HttpResponseRedirect(reverse('lot_au', args=(instance.id, user.id, )))
+         
     else:
         form = AuctionForm()
     return render(request, 'auctions/create_auction.html', {'form': form})
@@ -175,21 +173,16 @@ def edit_auction(request, lot_id):
     if request.method == 'POST':
         user = User.objects.get(pk=instance.owner_name.id)
         form = AuctionForm(request.POST, request.FILES)
-        category = request.POST.get('categories')
         if form.is_valid:
             changed_instance = form.save(commit=False)
             changed_instance.owner_name = user
             changed_instance.id = lot_id
-            #changed_instance.photo = #request.FILES.get('photo')
             if not changed_instance.photo:
                 changed_instance.photo = instance.photo
             changed_instance.save()
             form.save_m2m()
-            return render(request, 'auctions/lot.html', {
-                'lot': changed_instance,
-                'category': category,
-                'photo': changed_instance.photo
-            })
+            return HttpResponseRedirect(reverse('lot_au', args=(changed_instance.id, user.id, )))
+         
 
     return render(request, 'auctions/edit_lot.html', {
         'form': AuctionForm(initial=data),
