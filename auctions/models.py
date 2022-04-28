@@ -47,7 +47,7 @@ class Bid(models.Model):
     
 
 class Comments(models.Model):
-  item_comment = models.ForeignKey(Lot, on_delete=models.CASCADE)
+  item_comment = models.ForeignKey(Lot, related_name = 'comments', on_delete=models.CASCADE)
   author_comment = models.ForeignKey(User, on_delete=models.CASCADE)
   body_comment = models.TextField()
   date_added = models.DateTimeField(auto_now_add=True)
