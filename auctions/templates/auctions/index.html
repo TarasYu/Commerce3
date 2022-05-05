@@ -35,10 +35,18 @@
         {% endif %}
 
         <div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
-
+        <br/>
         <div class="description">{{lot.description}}</div>
-
-
+        <br/>
+        <div class="comments">
+            <div>
+                <h3 style="color: rgb(137, 137, 246); display: inline; ">Comments...</h3>
+                <p style="display: inline; float: right">
+                    <a href="#">Add comment</a>
+                </p>
+              
+            </div>
+        </div>
 
     </div>
     {% endfor %}
