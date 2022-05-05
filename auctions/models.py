@@ -34,19 +34,12 @@ class Lot(models.Model):
     def __str__(self):
         return self.title
 
-'''    @property
-    def imageURL(self):
-        try:
-            url = self.photo.url
-        except:
-            url=''
-        return url        '''
 
 class Bid(models.Model):
     bid = models.DecimalField(max_digits=10, decimal_places=2)
     
 
-class Comments(models.Model):
+class Comment(models.Model):
   item_comment = models.ForeignKey(Lot, related_name = 'comments', on_delete=models.CASCADE)
   author_comment = models.ForeignKey(User, on_delete=models.CASCADE)
   body_comment = models.TextField()

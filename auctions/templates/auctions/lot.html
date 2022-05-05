@@ -2,15 +2,15 @@
 {% load auctions_extras %}
 
 {% block body %}
-<div class="activ_list">
+<div class="lot">
    
    {% if lot.photo %}
 
-   <div class="img">
-      <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
-   </div>
+      <div class="img">
+         <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+      </div>
    {% else %}
-   <div class="img"></div>
+      <div class="img"></div>
    {% endif %}
 
    <p></p>
@@ -24,26 +24,25 @@
    <div class="description">{{lot.description}}</div>
    {% if user.is_authenticated %}
 
-   <div class="btn-watchlist">
+      <div class="btn-watchlist">
 
-      {% if in_watchlist %}
-      <form action="{% url 'watchlist' %}" method="post">
-         {% csrf_token %}
-         {{ form }}
-         <p><input type="submit" value="Remove from watchlist"></p>
-      </form>
-      {% else %}
-      <form action="{% url 'watchlist' %}" method="post">
-         {% csrf_token %}
-         {{ form }}
-         <p><input type="submit" value="Add to watchlist"></p>
-      </form>
-
-      {% endif %}
-
+         {% if in_watchlist %}
+            <form action="{% url 'watchlist' %}" method="post">
+               {% csrf_token %}
+               {{ form }}
+               <p><input type="submit" value="Remove from watchlist"></p>
+            </form>
+         {% else %}
+            <form action="{% url 'watchlist' %}" method="post">
+               {% csrf_token %}
+               {{ form }}
+               <p><input type="submit" value="Add to watchlist"></p>
+            </form>
+         {% endif %}
 
 
-   </div>
+
+      </div>
 
    {% endif %}
 
@@ -52,9 +51,35 @@
    <p>Lot.ID: {{lot.id}}</p>
   
    {% if lot.owner_name|name_as_str == user.username|name_as_str %}
-   <div class="edit">
-      <a href="{% url 'edit_auction' lot.id %}" class="btn">Edit lot data</a>
-   </div>
+      <div class="edit">
+         <a href="{% url 'edit_auction' lot.id %}" class="btn">Edit lot data</a>
+      </div>
    {% endif %}
+
+   <br/>
+   <div class="comments">
+      <div>
+         <h3 style="color: rgb(137, 137, 246); display: inline; ">Comments...</h3>
+         <p style="display: inline; float: right">
+            <a href="#">Add comment</a>
+         </p>
+         
+         <br/><br/>
+      </div>
+      {% if not lot.comments.all %}
+         No Comments Yet...
+      {% else %}
+         {% for comment in lot.comments.all %}
+            <strong>
+               {{ comment.author_comment }} - {{ comment.date_added|date:"N j, Y,  H:i" }}
+            </strong>
+            <br/>
+            {{ comment.body_comment }}
+            <hr>
+            <br/>
+         {% endfor %}
+      {% endif %}
+
+   </div>
 </div>
 {% endblock %}

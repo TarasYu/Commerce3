@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Auctions, Lot, Bid, Category, Watchlist, Profile, Comments
+from .models import User, Auctions, Lot, Bid, Category, Watchlist, Profile, Comment
 # Register your models here.
 class WatchlistAdmin(admin.ModelAdmin):
    #exclude = ("watchlist_owner",)
@@ -7,7 +7,7 @@ class WatchlistAdmin(admin.ModelAdmin):
 
 admin.site.register(User)
 admin.site.register(Auctions)
-admin.site.register(Comments)
+admin.site.register(Comment)
 admin.site.register(Lot)
 admin.site.register(Bid)
 admin.site.register(Category)
