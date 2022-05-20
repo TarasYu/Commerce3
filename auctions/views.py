@@ -1,17 +1,18 @@
 from calendar import c
 from dataclasses import field
-from re import A, L
-import re
+from tkinter import Widget
+from xml.etree.ElementTree import Comment
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django import forms
+from django.views.generic.edit import CreateView
 from django.core.files import File
 from django.contrib.auth.decorators import login_required
 from django.forms import HiddenInput, ModelForm, Textarea
-from .models import  User, Category, Auctions, Bid, Lot, Watchlist
+from .models import  User, Category, Auctions, Bid, Lot, Watchlist, Comment
 
 
 def login_view(request):
@@ -142,9 +143,32 @@ class AuctionForm(ModelForm):
 
         }
 
-#class CommentsForm(ModelForm):
-#    class Meta:
-#        model = Comments
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['body_comment']
+
+        widgets = {
+       'body_comment': Textarea(attrs={'class': 'form-control'})
+        }       
+
+class AddCommentView(CreateView):
+    model = Comment
+    template_name = 'auctions/add_comment.html'
+    form_class = CommentForm
+    #fields = ('body_comment')
+    
+    def form_valid(self, form):
+        lot = Lot.objects.get(pk=self.kwargs['lot_id'])
+        form.instance.author_comment = self.request.user
+        form.instance.item_comment = lot
+        return super().form_valid(form) 
+    
+    def get_success_url(self):
+        return reverse_lazy('lot_au', kwargs={'lot_id': self.kwargs['lot_id'], 'user_id': self.kwargs['user_id']})
+
+    
+    #success_url = reverse_lazy('lot_au')
 
 def create_auction(request, user_id):
     if request.method == 'POST':
@@ -204,11 +228,9 @@ def watchlist(request):
         bool = q.filter(id=lot_id).exists()
     
         if not bool:
-            watchlist.watchlist_item.add(lot)
-   
+            watchlist.watchlist_item.add(lot)   
         else:
-            watchlist.watchlist_item.remove(lot)
-    
+            watchlist.watchlist_item.remove(lot)    
 
         return HttpResponseRedirect(reverse('lot_au', args=(lot.id, user.id, )))
   

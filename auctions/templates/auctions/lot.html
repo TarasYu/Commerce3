@@ -49,11 +49,13 @@
    {{lot.owner_name }}
    {{user.username}}
    <p>Lot.ID: {{lot.id}}</p>
+   <p>User.ID: {{user.id}}</p>
   
    {% if lot.owner_name|name_as_str == user.username|name_as_str %}
       <div class="edit">
          <a href="{% url 'edit_auction' lot.id %}" class="btn">Edit lot data</a>
       </div>
+      <br>
    {% endif %}
 
    <br/>
@@ -61,15 +63,19 @@
       <div>
          <h3 style="color: rgb(137, 137, 246); display: inline; ">Comments...</h3>
          <p style="display: inline; float: right">
-            <a href="#">Add comment</a>
+            {% if user.is_authenticated %}
+               <a href="{% url 'add_comment' lot.id user.id %}">Add comment</a>
+            {% else %}
+               Add comment
+            {% endif%}
          </p>
-         
+
          <br/><br/>
       </div>
       {% if not lot.comments.all %}
          No Comments Yet...
       {% else %}
-         {% for comment in lot.comments.all %}
+         {% for comment in lot.comments.all|dictsortreversed:'date_added' %}
             <strong>
                {{ comment.author_comment }} - {{ comment.date_added|date:"N j, Y,  H:i" }}
             </strong>
