@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import AddCommentView
+from .views import AddCommentView, BidView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -17,5 +17,6 @@ urlpatterns = [
     path("lot_au/<int:lot_id>/<int:user_id>", views.lot_au, name="lot_au"),
     path("watch_list/<int:user_id>", views.watch_list, name='watch_list'),
     path("comment/<int:lot_id>/<int:user_id>", AddCommentView.as_view(), name="add_comment"),
+    path("bid/<int:lot_id>/<int:user_id>", BidView.as_view(), name="bid"),
 ]
 

@@ -2,7 +2,7 @@
 {% load auctions_extras %}
 
 {% block body %}
-<div class="lot">
+<br class="lot">
    
    {% if lot.photo %}
 
@@ -16,7 +16,17 @@
    <p></p>
    <div class="title">{{ lot.title }}</div>
    
-   <div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
+   <div class="price">
+         {% if not lot.bids.all %}
+            <div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
+         {% else %}
+            <div class="price"><strong>{{ lot.bids.last }} &#8364</strong></div>
+         {% endif %}
+   </div>
+
+   <div class="edit">
+      <a href="{% url 'bid' lot.id user.id %}" class="btn">Make offer</a>
+   </div>
    
    <p></p>
    <p></p>
@@ -25,25 +35,22 @@
    {% if user.is_authenticated %}
 
       <div class="btn-watchlist">
-
          {% if in_watchlist %}
             <form action="{% url 'watchlist' %}" method="post">
                {% csrf_token %}
                {{ form }}
-               <p><input type="submit" value="Remove from watchlist"></p>
+               <br>
+               <p class="edit"><input type="submit" class="btn" value="Remove from watchlist"></p>
             </form>
          {% else %}
             <form action="{% url 'watchlist' %}" method="post">
                {% csrf_token %}
                {{ form }}
-               <p><input type="submit" value="Add to watchlist"></p>
+               <br>
+               <p class="edit"><input type="submit" class="btn" value="Add to watchlist"></p>
             </form>
          {% endif %}
-
-
-
       </div>
-
    {% endif %}
 
    {{lot.owner_name }}
@@ -55,10 +62,16 @@
       <div class="edit">
          <a href="{% url 'edit_auction' lot.id %}" class="btn">Edit lot data</a>
       </div>
+      <br><br>
+
+      <div class="edit">
+         <a href="#" class="btn">Close auction</a>
+      </div>
       <br>
    {% endif %}
+   <br>
 
-   <br/>
+   <br><br>
    <div class="comments">
       <div>
          <h3 style="color: rgb(137, 137, 246); display: inline; ">Comments...</h3>

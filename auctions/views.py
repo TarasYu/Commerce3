@@ -169,6 +169,25 @@ class AddCommentView(CreateView):
 
     
     #success_url = reverse_lazy('lot_au')
+class BidView(CreateView):
+    model = Bid
+    template_name = 'auctions/bid_offer.html'
+    fields = ('bid',)
+
+    def form_valid(self, form):
+        lot = Lot.objects.get(pk=self.kwargs['lot_id'])
+        form.instance.bid_author = self.request.user
+        form.instance.bid_item = lot
+        return super().form_valid(form) 
+
+    def get_context_data(self, **kwargs):
+        context = super(BidView, self).get_context_data(**kwargs)
+        context['lot_id'] = self.kwargs['lot_id']
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('lot_au', kwargs={'lot_id': self.kwargs['lot_id'], 'user_id': self.kwargs['user_id']})
+
 
 def create_auction(request, user_id):
     if request.method == 'POST':

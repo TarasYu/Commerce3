@@ -7,7 +7,6 @@ from django.conf import settings
 class User(AbstractUser):
     pass
 
-
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     def __str__(self):
@@ -20,8 +19,7 @@ class Auctions(models.Model):
 class Category(models.Model):
     category = models.CharField(max_length=100, blank=True)
     def __str__(self):
-        return self.category
-    
+        return self.category   
 
 class Lot(models.Model):
     title = models.CharField(max_length=180)
@@ -37,6 +35,11 @@ class Lot(models.Model):
 
 class Bid(models.Model):
     bid = models.DecimalField(max_digits=10, decimal_places=2)
+    bid_author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    bid_item = models.ForeignKey(Lot, on_delete=models.CASCADE, null=True, related_name="bids")
+
+    def __str__(self):
+        return str(self.bid)
     
 
 class Comment(models.Model):

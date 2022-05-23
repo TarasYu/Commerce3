@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<br>
+
+   {% if lot.photo %}
+
+      <div class="img">
+         <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+         </div>
+   {% else %}
+      <div class="img"></div>
+   {% endif %}
+
+<p></p>
+<div class="title">{{ lot.title }}</div>
+
+<div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
+
+   <div>
+      <form method="post">
+         {% csrf_token %}
+         {{ form.as_p }}
+         <button class="btn btn-secondary" type="submit">Make offer</button>
+      </form>
+   </div>
+
+
+<div class="description">{{lot.description}}</div>
+   {{lot.owner_name }}
+   {{user.username}}
+   <p>Lot.ID: {{lot.id}}</p>
+   <p>User.ID: {{user.id}}</p>
+   <br>
+</div>
+{% endblock %}
