@@ -40,6 +40,10 @@ body {
     min-height: 150px;
     margin: 0 5px 0px 5px;
 }
+.message {
+    border: 1px solid;
+    background-color: rgb(237, 171, 184);
+}
 
 .img {
     width: 100px;

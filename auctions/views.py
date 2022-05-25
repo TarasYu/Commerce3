@@ -13,6 +13,7 @@ from django.core.files import File
 from django.contrib.auth.decorators import login_required
 from django.forms import HiddenInput, ModelForm, Textarea
 from .models import  User, Category, Auctions, Bid, Lot, Watchlist, Comment
+from django.contrib import messages
 
 
 def login_view(request):
@@ -85,7 +86,7 @@ def lot_category(request, category_id):
         "lot_categories": lot_categories,
         "categories": category,
     })
-#відображення сторінки після натискання "watchlist"
+#відображення сторінки "watchlist"
 def watch_list(request, user_id):
    
     set = Watchlist.objects.all()
@@ -140,7 +141,6 @@ class AuctionForm(ModelForm):
         exclude = ['owner_name']
         widgets = {
             'description':  Textarea(attrs={'cols':50, 'rows': 5})    
-
         }
 
 class CommentForm(ModelForm):
@@ -169,25 +169,51 @@ class AddCommentView(CreateView):
 
     
     #success_url = reverse_lazy('lot_au')
-class BidView(CreateView):
-    model = Bid
-    template_name = 'auctions/bid_offer.html'
-    fields = ('bid',)
+class BidForm(ModelForm):
+    class Meta:
+        model = Bid
+        fields = '__all__'
+        bid = forms.DecimalField(required=False)
+        widgets = {
+            'bid_item': forms.HiddenInput,
+            'bid_author': forms.HiddenInput,
+            'bid': forms.NumberInput (attrs={
+                'class': 'bid_input',
+                'required': 'True'
+            })
+        }
 
-    def form_valid(self, form):
-        lot = Lot.objects.get(pk=self.kwargs['lot_id'])
-        form.instance.bid_author = self.request.user
-        form.instance.bid_item = lot
-        return super().form_valid(form) 
 
-    def get_context_data(self, **kwargs):
-        context = super(BidView, self).get_context_data(**kwargs)
-        context['lot_id'] = self.kwargs['lot_id']
-        return context
-
-    def get_success_url(self):
-        return reverse_lazy('lot_au', kwargs={'lot_id': self.kwargs['lot_id'], 'user_id': self.kwargs['user_id']})
-
+def bid_view(request, lot_id, user_id):
+    lot = Lot.objects.get(pk=lot_id)
+    user = User.objects.get(pk=user_id)
+    if request.method == 'POST':
+        form = BidForm(request.POST)
+        bid = int(request.POST.get('bid'))            
+        if lot.bids.last().bid >= bid:
+            messages.error(request, "Your bid must be higher than current one")
+            return render(request, 'auctions/bid_offer.html', {
+            'lot': lot,
+            'bid': bid,
+            'form': BidForm(
+                {
+                    'bid_item': lot,
+                    'bid_author': user,    
+                })
+            })
+        
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('lot_au', args=(lot.id, user.id, )))         
+    else:
+        return render(request, 'auctions/bid_offer.html', {
+            'lot': lot,
+            'form': BidForm(
+                {
+                    'bid_item': lot,
+                    'bid_author': user,
+                })
+        })    
 
 def create_auction(request, user_id):
     if request.method == 'POST':
@@ -198,6 +224,7 @@ def create_auction(request, user_id):
             instance.owner_name = user
             instance.save()
             form.save_m2m()
+            Bid(bid=instance.starting_price, bid_author=user, bid_item=Lot.objects.get(pk=instance.id)).save()
             return HttpResponseRedirect(reverse('lot_au', args=(instance.id, user.id, )))
          
     else:
@@ -221,10 +248,13 @@ def edit_auction(request, lot_id):
             changed_instance.id = lot_id
             if not changed_instance.photo:
                 changed_instance.photo = instance.photo
+             
             changed_instance.save()
             form.save_m2m()
-            return HttpResponseRedirect(reverse('lot_au', args=(changed_instance.id, user.id, )))
-         
+            if instance.bids.all().count() == 1:
+                instance.bids.get().delete()
+                Bid(bid=changed_instance.starting_price, bid_item=Lot.objects.get(pk=lot_id), bid_author=user).save()
+            return HttpResponseRedirect(reverse('lot_au', args=(changed_instance.id, user.id, )))         
 
     return render(request, 'auctions/edit_lot.html', {
         'form': AuctionForm(initial=data),

@@ -14,19 +14,32 @@
 
 <p></p>
 <div class="title">{{ lot.title }}</div>
-
-<div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
+<div class="price"><strong>{{ lot.bids.last }} &#8364</strong></div>
 
    <div>
+      <p> {{ bid }} </p>
+      {% if messages %}
+         {% for message in messages %}
+         <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong> 
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+            <!--<p class="message"><strong>{{ message }}</strong></p> -->
+         {% endfor %}          
+      {% endif %}
+
       <form method="post">
          {% csrf_token %}
-         {{ form.as_p }}
+         <!--<input type="number" step="0.01" placeholder="0.00"> -->
+         <p>{{ form }} &#8364</p>
          <button class="btn btn-secondary" type="submit">Make offer</button>
       </form>
    </div>
 
 
-<div class="description">{{lot.description}}</div>
+<!--<div class="description">{{lot.description}}</div> -->
    {{lot.owner_name }}
    {{user.username}}
    <p>Lot.ID: {{lot.id}}</p>
