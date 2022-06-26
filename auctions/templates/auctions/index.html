@@ -5,7 +5,7 @@
         {% for lot in lots %}
             <div class="activ_list">
                 {% if user.is_authenticated %}
-                    <!--посилання на відображення для аутифікованих відвідувачів-->
+                    <!--посилання на відображення лоту для аутифікованих відвідувачів-->
                     <a href="{% url 'lot_au' lot.id user.id %}">
                         {% if lot.photo %}
                             <div class="img">
@@ -17,13 +17,29 @@
                     </a>
                     <a href="{% url 'lot_au' lot.id user.id %}">
                         <div class="title">{{ lot.title }}</div>
-                    </a>
-                {% else %}
-                    <!--тут посилання на відображення лоту для неаутифікованих-->
+                    </a> 
+                    <!-- для відображення завершених аукціонів у watchlist-->
+                    {% if lot.end_auction %}
+                        {% if lot.owner_name.id == user.id %}
+                            <div class="">
+                                <h1 align="center">You've completed this auction </h1>
+                            </div>
+                        {% elif lot.bids.last.bid_author.id == user.id %}
+                            <div class="">
+                                <h1 align="center">You are the winner. This lot is yours!</h1>
+                            </div>
+                        {% else %}
+                            <div class="">
+                                <h1 align="center">The auction is over</h1>
+                            </div>
+                        {% endif %}                        
+                    {% endif %}
+                {% else %}                    
+                    <!-- посилання на відображення лоту для неаутифікованих-->
                     <a href="{% url 'lot' lot.id %}">
                         {% if lot.photo %}
                             <div class="img">
-                             <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+                            <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
                             </div>
                         {% else %}
                             <div class="img"></div>
@@ -34,18 +50,15 @@
                     </a>
                 {% endif %}
 
-                {% if not lot.bids.all %}
-                    <div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
-                {% else %}
-                    <div class="price"><strong>{{ lot.bids.last }} &#8364</strong></div>
-                {% endif %}
-                <br/>
+                <div class="price"><strong>{{ lot.bids.last }} &#8364</strong></div>
+                <br />
                 <div class="description">{{lot.description}}</div>
-        
 
-            </div>
-    
+                
+            </div>                
         {% endfor %}
-
     </div>
 {% endblock %}
+
+
+    

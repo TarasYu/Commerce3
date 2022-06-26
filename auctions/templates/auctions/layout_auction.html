@@ -12,12 +12,17 @@
          <a href="{% url 'index' %} ">All</a>
       </div>
       {% for category in categories %}
-      <div>
-         <a href="{% url 'lot_category' category.id %}">{{ category.category }}</a>
-      </div>
+         <div>
+            <a href="{% url 'lot_category' category.id %}">{{ category.category }}</a>
+         </div>
       {% endfor %}
+      <div>
+         <a href="{% url 'completed_au' %}">Completed auctions</a>
+      </div>
    </div>
+ 
    {% block listing %}
    {% endblock %}
+ 
 </div>
 {% endblock %}

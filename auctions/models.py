@@ -7,14 +7,6 @@ from django.conf import settings
 class User(AbstractUser):
     pass
 
-class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    def __str__(self):
-        return str(self.user.username)
-
-class Auctions(models.Model):
-    current_price = models.DecimalField(max_digits=10, decimal_places=2)
-    end_auction = models.BooleanField(default=False)
 
 class Category(models.Model):
     category = models.CharField(max_length=100, blank=True)
@@ -28,6 +20,7 @@ class Lot(models.Model):
     owner_name = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=200, blank=True)
     starting_price = models.DecimalField(max_digits=10, decimal_places=2)
+    end_auction = models.BooleanField(default=False) 
 
     def __str__(self):
         return self.title

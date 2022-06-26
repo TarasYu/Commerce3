@@ -6,7 +6,6 @@
                 
          {% for item in lot_categories %}
             <div class="activ_list">
-               <!-- % url 'lot' lot.id %-->
                
                <a href="{% url 'lot' item.id %}" >
                   <div class="img">
@@ -17,7 +16,10 @@
                <a href="{% url 'lot' item.id %}">
                   <div class="title">{{ item.title }}</div>
                </a>
-               <div class="price"><strong>{{ item.starting_price }} &#8364</strong></div>      
+               {% if item.end_auction %}
+                  <h1 align="center">The auction is over</h1>
+               {% endif %}
+               <div class="price"><strong>{{ item.bids.last }} &#8364</strong></div>      
             </div>
          {% endfor %}
       

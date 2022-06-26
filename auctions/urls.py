@@ -18,5 +18,8 @@ urlpatterns = [
     path("watch_list/<int:user_id>", views.watch_list, name='watch_list'),
     path("comment/<int:lot_id>/<int:user_id>", AddCommentView.as_view(), name="add_comment"),
     path("bid/<int:lot_id>/<int:user_id>", views.bid_view, name="bid"),
+    path("end_au/<int:lot_id>", views.end_au, name="end_au"),
+    path("completed_au", views.completed_au, name="completed_au" )
+    
 ]
 

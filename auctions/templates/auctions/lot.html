@@ -2,103 +2,160 @@
 {% load auctions_extras %}
 
 {% block body %}
-<br class="lot">
-   
-   {% if lot.photo %}
+   {% if not lot.end_auction %}   
+      {% if lot.photo %}
 
-      <div class="img">
-         <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
-      </div>
-   {% else %}
-      <div class="img"></div>
-   {% endif %}
-
-   <p></p>
-   <div class="title">{{ lot.title }}</div>
-   
-   <div class="price">
-         {% if not lot.bids.all %}
-            <div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
-         {% else %}
-            <div class="price"><strong>{{ lot.bids.last }} &#8364</strong></div>
-         {% endif %}
-   </div>
-
-   <div class="edit">
-      <a href="{% url 'bid' lot.id user.id %}" class="btn">Make offer</a>
-   </div>
-   
-   <p></p>
-   <p></p>
-
-   <div class="description">{{lot.description}}</div>
-   {% if user.is_authenticated %}
-
-      <div class="btn-watchlist">
-         {% if in_watchlist %}
-            <form action="{% url 'watchlist' %}" method="post">
-               {% csrf_token %}
-               {{ form }}
-               <br>
-               <p class="edit"><input type="submit" class="btn" value="Remove from watchlist"></p>
-            </form>
-         {% else %}
-            <form action="{% url 'watchlist' %}" method="post">
-               {% csrf_token %}
-               {{ form }}
-               <br>
-               <p class="edit"><input type="submit" class="btn" value="Add to watchlist"></p>
-            </form>
-         {% endif %}
-      </div>
-   {% endif %}
-
-   {{lot.owner_name }}
-   {{user.username}}
-   <p>Lot.ID: {{lot.id}}</p>
-   <p>User.ID: {{user.id}}</p>
-  
-   {% if lot.owner_name|name_as_str == user.username|name_as_str %}
-      <div class="edit">
-         <a href="{% url 'edit_auction' lot.id %}" class="btn">Edit lot data</a>
-      </div>
-      <br><br>
-
-      <div class="edit">
-         <a href="#" class="btn">Close auction</a>
-      </div>
-      <br>
-   {% endif %}
-   <br>
-
-   <br><br>
-   <div class="comments">
-      <div>
-         <h3 style="color: rgb(137, 137, 246); display: inline; ">Comments...</h3>
-         <p style="display: inline; float: right">
-            {% if user.is_authenticated %}
-               <a href="{% url 'add_comment' lot.id user.id %}">Add comment</a>
-            {% else %}
-               Add comment
-            {% endif%}
-         </p>
-
-         <br/><br/>
-      </div>
-      {% if not lot.comments.all %}
-         No Comments Yet...
+         <div class="img">
+            <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+         </div>
       {% else %}
-         {% for comment in lot.comments.all|dictsortreversed:'date_added' %}
-            <strong>
-               {{ comment.author_comment }} - {{ comment.date_added|date:"N j, Y,  H:i" }}
-            </strong>
-            <br/>
-            {{ comment.body_comment }}
-            <hr>
-            <br/>
-         {% endfor %}
+         <div class="img"></div>
       {% endif %}
 
-   </div>
-</div>
+      <br>
+  
+      <div class="title">{{ lot.title }}</div>
+      
+      <div class="price">
+      
+               <div class="price"><strong>{{ lot.bids.last }} &#8364</strong></div>
+      </div>
+
+      <p></p>
+      <p></p>
+
+      <div class="description">{{lot.description}}</div>
+         {% if user.is_authenticated %}
+            <div class="edit">
+               <a href="{% url 'bid' lot.id user.id %}" class="btn">Make offer</a>
+            </div>
+            <br>
+
+            <div class="btn-watchlist">
+               {% if in_watchlist %}
+                  <form action="{% url 'watchlist' %}" method="post">
+                     {% csrf_token %}
+                     {{ form }}
+                     <br>
+                     <p class="edit"><input type="submit" class="btn" value="Remove from watchlist"></p>
+                  </form>
+               {% else %}
+                  <form action="{% url 'watchlist' %}" method="post">
+                     {% csrf_token %}
+                     {{ form }}
+                     <br>
+                     <p class="edit"><input type="submit" class="btn" value="Add to watchlist"></p>
+                  </form>
+               {% endif %}
+            </div>
+         {% endif %}
+
+      {{lot.owner_name }}
+      {{user.username}}
+      <p>Lot.ID: {{lot.id}}</p>
+      <p>User.ID: {{user.id}}</p>
+      <p>Lot.end_au: {{ lot.end_auction }}</p>
+      <p>Last.bids: {{ lot.bids.last.bid_author }}</p>
+         
+      {% if lot.owner_name|name_as_str == user.username|name_as_str %}
+         <div class="edit">
+            <a href="{% url 'edit_auction' lot.id %}" class="btn">Edit lot data</a>
+         </div>
+         <br><br>
+
+         <div class="edit">
+            <a href="{% url 'end_au' lot.id %}" class="btn">Close auction</a>
+         </div>
+         <br>
+      {% endif %}
+      <br>
+
+      <br><br>
+      <div class="comments">
+         <div>
+            <h3 style="color: rgb(137, 137, 246); display: inline; ">Comments...</h3>
+            <p style="display: inline; float: right">
+               {% if user.is_authenticated %}
+                  <a href="{% url 'add_comment' lot.id user.id %}">Add comment</a>
+               {% else %}
+                  Add comment
+               {% endif%}
+            </p>
+
+            <br/><br/>
+         </div>
+         {% if not lot.comments.all %}
+            No Comments Yet...
+         {% else %}
+            {% for comment in lot.comments.all|dictsortreversed:'date_added' %}
+               <strong>
+                  {{ comment.author_comment }} - {{ comment.date_added|date:"N j, Y,  H:i" }}
+               </strong>
+               <br/>
+               {{ comment.body_comment }}
+               <hr>
+               <br/>
+            {% endfor %}
+         {% endif %}
+      </div>
+   {% else %}
+      {% if lot.photo %}            
+         <div class="img">
+            <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+         </div>
+      {% else %}
+         <div class="img"></div>
+      {% endif %}
+      {% if user.is_authenticated %}
+         {% if lot.owner_name.id == user.id %}               
+            <div class="">
+               <h1 align="center">You've completed this auction </h1>
+            </div>
+         {% elif lot.bids.last.bid_author.id == user.id %}
+            <div class="">
+            <h1 align="center">You are the winner. This lot is yours!</h1>
+            </div>
+         {% else %}
+            <div class="">
+               <h1 align="center">The auction is over</h1>
+            </div>
+         {% endif %}
+         <div class="btn-watchlist">
+            {% if in_watchlist %}
+               <form action="{% url 'watchlist' %}" method="post">
+                  {% csrf_token %}
+                  {{ form }}
+                  <br>
+                  <p class="edit"><input type="submit" class="btn" value="Remove from watchlist"></p>
+               </form>
+            {% endif %}
+         </div>
+      {% else %}
+         <div class="">
+            <h1 align="center">The auction is over</h1>
+         </div>
+      {% endif %}
+            
+         <br>
+         
+         <div class="title">{{ lot.title }}</div>
+         
+         <div class="price">
+         
+            <div class="price"><strong>{{ lot.bids.last }} &#8364</strong></div>
+         </div>
+         
+         <p></p>
+         <p></p>
+         
+         <div class="description">{{lot.description}}</div>
+         {{lot.owner_name }}
+         {{user.username}}
+         <p>Lot.ID: {{lot.id}}</p>
+         <p>User.ID: {{user.id}}</p>
+         <p>Lot.end_au: {{ lot.end_auction }}</p>
+         <p>Last.bids: {{ lot.bids.last.bid_author }}</p>
+      
+      </div>
+   {% endif %}
 {% endblock %}

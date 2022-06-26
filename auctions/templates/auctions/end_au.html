@@ -1,0 +1,46 @@
+{% extends "auctions/layout.html" %}
+{% load auctions_extras %}
+
+{% block body %}
+
+{% if lot.photo %}
+
+   <div class="img">
+      <img src="{{ lot.photo.url }}" style="max-width: 100%; height: auto;"></img>
+   </div>
+{% else %}
+   <div class="img"></div>
+{% endif %}
+
+<br>
+<div class="title">{{ lot.title }}</div>
+
+<div class="price">
+   {% if not lot.bids.all %}
+      <div class="price"><strong>{{ lot.starting_price }} &#8364</strong></div>
+   {% else %}
+      <div class="price"><strong>{{ lot.bids.last }} &#8364</strong></div>
+   {% endif %}
+</div>
+<h1>Do you want to close auction?</h1>
+
+<br>
+<form method="post">
+   {% csrf_token %}
+   <input type="hidden" name="lot_id" value="{{ lot.id }}">
+   <button class='btn' type="submit">Close auction</button>
+</form>
+
+<div class="edit">
+   <a href="{% url 'lot_au' lot.id user.id %}" class="btn">Back to auction</a>
+</div>
+<br>
+
+{{lot.owner_name }}
+<p>Lot.ID: {{lot.id}}</p>
+<br><br>
+
+
+
+
+{% endblock %}

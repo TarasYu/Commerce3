@@ -12,7 +12,7 @@ from django.views.generic.edit import CreateView
 from django.core.files import File
 from django.contrib.auth.decorators import login_required
 from django.forms import HiddenInput, ModelForm, Textarea
-from .models import  User, Category, Auctions, Bid, Lot, Watchlist, Comment
+from .models import  User, Category, Bid, Lot, Watchlist, Comment
 from django.contrib import messages
 
 
@@ -69,13 +69,10 @@ def register(request):
 
 def index(request):
     categoryies = Category.objects.all()
-    lot = Lot.objects.all()
-    auctions = Auctions.objects.all()
+    lot = Lot.objects.filter(end_auction=False)
     return render(request, "auctions/index.html", {
         "categories": categoryies,
         "lots": lot,
-        "auctions": auctions
-
     })
 
 def lot_category(request, category_id):
@@ -138,7 +135,7 @@ def lot_au(request, lot_id, user_id):
 class AuctionForm(ModelForm):
     class Meta:
         model = Lot
-        exclude = ['owner_name']
+        exclude = ['owner_name', 'end_auction']
         widgets = {
             'description':  Textarea(attrs={'cols':50, 'rows': 5})    
         }
@@ -156,7 +153,7 @@ class AddCommentView(CreateView):
     model = Comment
     template_name = 'auctions/add_comment.html'
     form_class = CommentForm
-    #fields = ('body_comment')
+   
     
     def form_valid(self, form):
         lot = Lot.objects.get(pk=self.kwargs['lot_id'])
@@ -167,8 +164,6 @@ class AddCommentView(CreateView):
     def get_success_url(self):
         return reverse_lazy('lot_au', kwargs={'lot_id': self.kwargs['lot_id'], 'user_id': self.kwargs['user_id']})
 
-    
-    #success_url = reverse_lazy('lot_au')
 class BidForm(ModelForm):
     class Meta:
         model = Bid
@@ -282,6 +277,20 @@ def watchlist(request):
             watchlist.watchlist_item.remove(lot)    
 
         return HttpResponseRedirect(reverse('lot_au', args=(lot.id, user.id, )))
-  
 
+def end_au(request, lot_id):
+    lot = Lot.objects.get(pk=lot_id)
+    if request.method == "POST":
+        lot.end_auction = "True"
+        lot.save()
+        return HttpResponseRedirect(reverse('lot_au', args=(lot.id, lot.owner_name.id)))
+    else:
+        return render(request, 'auctions/end_au.html', {'lot': lot})
 
+def completed_au(request):
+    completed_lot = Lot.objects.filter(end_auction=True)
+    category = Category.objects.all()
+    return render(request, "auctions/lot_of_category.html", {
+        "lot_categories": completed_lot,
+        "categories": category,
+    })
